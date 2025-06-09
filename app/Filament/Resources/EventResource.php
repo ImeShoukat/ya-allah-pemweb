@@ -46,7 +46,11 @@ class EventResource extends Resource
                 Forms\Components\TextInput::make('location')->required(),
                 Forms\Components\DateTimePicker::make('start_date')->required(),
                 Forms\Components\DateTimePicker::make('end_date')->required(),
-                Forms\Components\FileUpload::make('banner_image')->image()->nullable(),
+                Forms\Components\FileUpload::make('banner_image')
+                    ->disk('public') 
+                    ->directory('event-banners') 
+                    ->image()
+                    ->nullable(),
                 Forms\Components\Select::make('category')
                 ->options([
                     'festival'=> 'Festival',
