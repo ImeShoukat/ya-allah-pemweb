@@ -94,14 +94,26 @@ class EventResource extends Resource
                 Tables\Actions\Action::make('approve')
                     ->label('Approve')
                     ->visible(fn ($record) => $record->status === 'pending')
-                    ->action(fn ($record) => $record->update(['status' => 'approved'])),
-
+                    ->action(function ($record) {
+                        $record->status = 'approved';
+                        $record->save();
+                    })
+                    ->successNotificationTitle('Event approved.')
+                    ->requiresConfirmation()
+                    ->after(fn () => redirect(request()->header('Referer'))),
                 Tables\Actions\Action::make('reject')
                     ->label('Reject')
                     ->color('danger')
                     ->visible(fn ($record) => $record->status === 'pending')
-                    ->action(fn ($record) => $record->update(['status' => 'rejected'])),
-            ])
+                    ->action(function ($record) {
+                        $record->status = 'rejected';
+                        $record->save();
+                    })
+                    ->successNotificationTitle('Event rejected.')
+                    ->requiresConfirmation()
+                    ->after(fn () => redirect(request()->header('Referer'))),
+                
+                ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
